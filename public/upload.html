@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Files | PrintEase Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-indigo-50 min-h-screen">
+    <nav class="gradient-bg text-white shadow-xl fixed w-full z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="home.html" class="text-2xl font-bold flex items-center gap-2">
+                <i class="fas fa-print"></i>
+                PrintEase Pro
+            </a>
+            <button onclick="logout()" class="flex items-center">
+                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 pt-24 pb-12 max-w-7xl">
+        <a href="home.html" class="mb-4 text-blue-600 hover:underline flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i>Back to Centers
+        </a>
+        <div class="glassmorphism rounded-2xl p-8 shadow-xl">
+            <h2 class="text-2xl font-bold mb-6">Upload Documents</h2>
+            <div id="uploadZone" class="border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center cursor-pointer mb-6 hover:border-blue-400 transition-colors">
+                <div class="text-gray-500 mb-4">
+                    <i class="fas fa-cloud-upload-alt text-4xl"></i>
+                </div>
+                <p class="text-gray-600">Drag & drop files here or click to browse</p>
+                <input type="file" id="fileInput" multiple class="hidden">
+            </div>
+            <div id="fileList" class="space-y-4"></div>
+            <button onclick="window.location.href='settings.html'" 
+                    class="gradient-bg text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 mt-6 w-full">
+                Continue to Settings <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

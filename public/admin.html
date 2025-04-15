@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | PrintEase Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-indigo-50 min-h-screen">
+    <nav class="gradient-bg text-white shadow-xl fixed w-full z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="home.html" class="text-2xl font-bold flex items-center gap-2">
+                <i class="fas fa-print"></i>
+                PrintEase Pro
+            </a>
+            <button onclick="logout()" class="flex items-center">
+                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 pt-24 pb-12 max-w-7xl">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
+            <div class="flex gap-4">
+                <button onclick="showAddCenterModal()" 
+                    class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 flex items-center">
+                    <i class="fas fa-plus mr-2"></i>Add Center
+                </button>
+                <button onclick="showUserSide()" 
+                    class="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-300">
+                    View User Side
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mb-8 border-b border-gray-200">
+            <div class="flex space-x-8">
+                <button id="jobsTab" class="tab-button active py-2 px-4 font-medium text-blue-600 border-b-2 border-blue-600">
+                    Print Jobs
+                </button>
+                <button id="centersTab" class="tab-button py-2 px-4 font-medium text-gray-500 hover:text-gray-700">
+                    Centers
+                </button>
+            </div>
+        </div>
+
+        <!-- Jobs Tab Content -->
+        <div id="jobsContent" class="tab-content active">
+            <div class="grid grid-cols-1 gap-6">
+                <div class="dashboard-card p-6">
+                    <h3 class="text-lg font-semibold mb-4">Active Print Jobs</h3>
+                    <div id="jobsContainer" class="space-y-4">
+                        <!-- Jobs will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Centers Tab Content -->
+        <div id="centersContent" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="centersList">
+                <!-- Existing centers will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Center Modal -->
+    <div id="addCenterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4">
+        <div class="glassmorphism rounded-2xl p-8 max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-6">Add New Center</h2>
+            <form id="addCenterForm" class="space-y-4">
+                <div>
+                    <label class="block mb-2 font-medium">Center Name</label>
+                    <input type="text" id="centerName" required 
+                           class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block mb-2 font-medium">Location</label>
+                    <input type="text" id="centerLocation" required 
+                           class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex gap-4">
+                    <button type="submit" class="gradient-bg text-white px-6 py-2 rounded-lg flex-1">
+                        Save Center
+                    </button>
+                    <button type="button" onclick="hideAddCenterModal()" 
+                            class="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg flex-1">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Admin-specific scripts
+        const socket = io('http://localhost:5000');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check admin status
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user || !user.isAdmin) {
+                window.location.href = 'login.html';
+            }
+
+            // Tab functionality
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                        content.classList.remove('active');
+                    });
+                    
+                    const target = button.id === 'jobsTab' ? 'jobsContent' : 'centersContent';
+                    document.getElementById(target).classList.remove('hidden');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+
+            // Load initial data
+            loadJobs();
+            renderCenters();
+
+            // Socket.IO listeners
+            socket.on('new-job', (job) => {
+                addJobToUI(job);
+            });
+
+            socket.on('initial-jobs', (jobs) => {
+                jobs.forEach(job => addJobToUI(job));
+            });
+        });
+
+        async function loadJobs() {
+            try {
+                const response = await fetch('/api/jobs', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const jobs = await response.json();
+                jobs.forEach(job => addJobToUI(job));
+            } catch (err) {
+                console.error('Error loading jobs:', err);
+            }
+        }
+
+        function addJobToUI(job) {
+            const jobsContainer = document.getElementById('jobsContainer');
+            const jobElement = document.createElement('div');
+            jobElement.className = 'dashboard-card p-4 hover-scale';
+            jobElement.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h4 class="font-semibold">${job.user?.email || 'Unknown User'}</h4>
+                        <p class="text-sm text-gray-500">${new Date(job.createdAt).toLocaleString()}</p>
+                    </div>
+                    <select class="status-select p-2 rounded-lg border" data-jobid="${job._id}" 
+                            onchange="updateJobStatus('${job._id}', this.value)">
+                        <option ${job.status === 'pending' ? 'selected' : ''} value="pending">Pending</option>
+                        <option ${job.status === 'processing' ? 'selected' : ''} value="processing">Processing</option>
+                        <option ${job.status === 'completed' ? 'selected' : ''} value="completed">Completed</option>
+                        <option ${job.status === 'cancelled' ? 'selected' : ''} value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p><span class="font-medium">Files:</span> ${job.files.length}</p>
+                        <p><span class="font-medium">Color:</span> ${job.settings.colorMode}</p>
+                    </div>
+                    <div>
+                        <p><span class="font-medium">Copies:</span> ${job.settings.copies}</p>
+                        <p><span class="font-medium">Total:</span> ₹${job.totalPrice}</p>
+                    </div>
+                </div>
+            `;
+            jobsContainer.prepend(jobElement);
+        }
+
+        async function updateJobStatus(jobId, newStatus) {
+            try {
+                await fetch(`/api/jobs/${jobId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+            } catch (err) {
+                console.error('Error updating job status:', err);
+            }
+        }
+
+        // Existing center management functions
+        function showAddCenterModal() {
+            document.getElementById('addCenterModal').classList.remove('hidden');
+            document.getElementById('addCenterModal').classList.add('flex');
+        }
+
+        function hideAddCenterModal() {
+            document.getElementById('addCenterModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Centers | PrintEase Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-indigo-50 min-h-screen">
+    <nav class="gradient-bg text-white shadow-xl fixed w-full z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="home.html" class="text-2xl font-bold flex items-center gap-2">
+                <i class="fas fa-print"></i>
+                PrintEase Pro
+            </a>
+            <button onclick="logout()" class="flex items-center">
+                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 pt-24 pb-12 max-w-7xl">
+        <div id="adminBackButton" class="hidden mb-4">
+            <button onclick="window.location.href='admin.html'" class="text-blue-600 hover:underline flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Admin Dashboard
+            </button>
+        </div>
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Available Centers</h1>
+            <p class="text-gray-600">Choose your nearest printing center</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="userCentersContainer"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Settings | PrintEase Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-indigo-50 min-h-screen">
+    <nav class="gradient-bg text-white shadow-xl fixed w-full z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="home.html" class="text-2xl font-bold flex items-center gap-2">
+                <i class="fas fa-print"></i>
+                PrintEase Pro
+            </a>
+            <button onclick="logout()" class="flex items-center">
+                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 pt-24 pb-12 max-w-7xl">
+        <a href="upload.html" class="mb-4 text-blue-600 hover:underline flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i>Back to Upload
+        </a>
+        <div class="glassmorphism rounded-2xl p-8 shadow-xl">
+            <h2 class="text-2xl font-bold mb-6">Print Settings</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="dashboard-card p-6">
+                    <label class="block text-lg font-medium mb-4">Print Preferences</label>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-2">Color Mode</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="color" value="bw" checked class="w-5 h-5 text-blue-500">
+                                    Black & White (₹2/page)
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="color" value="color" class="w-5 h-5 text-blue-500">
+                                    Color (₹10/page)
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Paper Size</label>
+                            <select id="paperSize" class="w-full p-2 rounded-lg border">
+                                <option value="A4">A4 (₹2)</option>
+                                <option value="A3">A3 (₹5)</option>
+                                <option value="A2">A2 (₹10)</option>
+                                <option value="A1">A1 (₹20)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-card p-6">
+                    <label class="block text-lg font-medium mb-4">Print Details</label>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-2">Copies</label>
+                            <div class="flex items-center gap-4">
+                                <button onclick="adjustCopies(-1)" class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200">
+                                    -
+                                </button>
+                                <input type="number" id="copies" min="1" value="1" class="w-20 text-center p-2 rounded-lg border">
+                                <button onclick="adjustCopies(1)" class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Orientation</label>
+                            <select id="orientation" class="w-full p-2 rounded-lg border">
+                                <option value="portrait">Portrait</option>
+                                <option value="landscape">Landscape</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card p-4 mb-6">
+                <h3 class="font-medium mb-2">Current Rates</h3>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li>• Black & White: ₹2 per page</li>
+                    <li>• Color: ₹10 per page</li>
+                    <li>• Paper Size: A4(₹2), A3(₹5), A2(₹10), A1(₹20)</li>
+                    <li>• Service Fee: ₹10 fixed</li>
+                </ul>
+            </div>
+            <button onclick="window.location.href='confirmation.html'" 
+                    class="gradient-bg text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 w-full">
+                Review Order <i class="fas fa-check-circle ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
